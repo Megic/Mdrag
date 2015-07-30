@@ -83,6 +83,7 @@
                             'x': e.pageX,//鼠标点击坐标
                             'y': e.pageY
                         };
+                        var distance_0=
                         posix['type']=0;//变化方向
                         var cType=$(this).attr('data-type');
                         switch (cType){
@@ -94,10 +95,13 @@
 
                         $.extend(moveObj, {
                             'move': true, 'call_down': function (e) {
+                                var direction=getDirection(posix,e);//获取变化方向
                                 var option={};
                                 var cX=e.pageX - posix.x;//x轴变化
                                 var cY=e.pageY - posix.y//y轴变化
-                                if (cType==2) option['width']=cX+ posix.w;
+                                var distance=getDistance(cX,cY);
+                              //  if (cType==2) option['width']=distance+ posix.w;
+                                if (cType==2) option['width']=direction?distance+ posix.w:posix.w-distance;
                                 item.css(option);
                                 //item.css({
                                 //    'width': Math.max(30, e.pageX - posix.x + posix.w),
@@ -149,6 +153,19 @@
 
 
         });
+//返回变化方向 返回 false 接近 true远离
+function getDirection(posix,e){
+var oldDistance=getDistance(posix.x-posix.ox,posix.y-posix.oy);
+var newDistance=getDistance(e.pageX-posix.ox,e.pageY-posix.oy);
+    if(oldDistance>newDistance){
+        return false;
+    }else{
+        return true;
+    }
+}
+     function getDistance(cX,cY){//两点坐标差返回距离
+         return parseInt(Math.pow((cX * cX + cY * cY), 0.5));
+     }
 
     };
 })(jQuery);
