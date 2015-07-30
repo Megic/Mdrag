@@ -1,0 +1,62 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>idrag一款基于的jQuery拖拽div层放大缩小插件-demo-www.daimajiayuan.com</title>
+<script src="http://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+<script type="text/javascript" src="Mdrag.js"></script>
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+*{padding: 0;margin: 0;}
+.box {transform: rotate(0deg); transform-origin:50%; width: 200px; height: 100px; cursor: move; position: absolute; top: 30px; left: 30px; background-color: #FFF; border: 1px solid #CCCCCC; }
+
+.mdrag-change{ width: 10px; height: 10px; overflow: hidden; cursor: se-resize; position: absolute; background-color: #09C; }
+.mdrag-rt{right: 0; top: 0;}
+.mdrag-lt{left: 0; top: 0;}
+.mdrag-rb{right: 0; bottom: 0; }
+.mdrag-lb{left: 0; bottom: 0; }
+.mdrag-t{ top: 0;left: 50%;}
+.mdrag-b{ bottom: 0;left: 50%;}
+.mdrag-r{top: 50%;right: 0;}
+.mdrag-l{top: 50%;left: 0;}
+
+body { background-color: #F3F3F3; }
+#box{width: 600px;  height: 500px;  background-color: #000;overflow: hidden;position: absolute;margin-top: 200px;   }
+#box2{width: 600px;  height: 500px;  background-color: #000;overflow: hidden;position: absolute;margin-top: 200px;   left: 600px;}
+#hh{}
+.mdrag-rotate{
+  top: 0;
+  position:absolute;
+          margin-top:-20px;left:50%;width:10px; height:10px;background-color:green;
+          cursor:pointer;
+}
+.r{position: relative;}
+</style>
+</head>
+
+<body>
+<div id="box"> 
+<div class="box" data-rotate="0"> 
+ <div id="hh">ss</div> 
+ </div>
+ <div class="box" data-rotate="0"> <div class="coor">123</div> </div>
+
+  </div>
+
+<div id="box2"> 
+<div class="box" data-rotate="0"> 
+ <div id="hh">ss</div> 
+ </div>
+ <div class="box" data-rotate="0"> <div class="coor">123</div> </div>
+
+  </div>
+</body>
+<script>  
+$('#box').Mdrag();
+$('#box2').Mdrag();
+// setTimeout(function(){
+//   $('#box').append('<div class="box" data-rotate="0"> <div class="rotate-cl"></div> <div id="hh">ss</div> <div class="coor"></div> </div>')
+// },1000)
+</script>
+</html> 
