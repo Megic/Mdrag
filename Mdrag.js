@@ -87,7 +87,6 @@
                             'y': e.pageY
                         };
                         var direction;
-                        posix['type'] = 0;//变化方向
                         var cType = clObj.attr('data-type');
                         switch (cType) {
                             case '1'://宽度变化
