@@ -8,7 +8,7 @@
     $.fn.Mdrag = function (options) {
         //创建一些默认值，拓展任何被提供的选项
         var settings = $.extend({
-            'item': '.box',//移动元素
+            'item': '.mdrag-box',//移动元素
             'controller': '.mdrag-change'//缩放控制元素
             , 'rotate': '.mdrag-rotate'
         }, options);
@@ -25,7 +25,7 @@
             //隐藏控制器
             var curBox;
             $('html').mousedown(function () {
-                $('.mdrag-cl', this).hide();
+                $(settings.item,this).removeClass('mdrag-show');
             });
             //监测鼠标移动
             obj.mousemove(function (e) {
@@ -58,8 +58,9 @@
 
 
             obj.on('mousedown', settings.item, function (e) {
-                $('.mdrag-cl', curBox).hide();
-                curBox = this;
+                if(curBox)curBox.removeClass('mdrag-show');
+                curBox = $(this);
+                curBox.addClass('mdrag-show');
                 if (!moveObj.move) {
                     $.extend(moveObj, {'move': true, 'move_target': this});
                     var item = $(this);
@@ -73,9 +74,12 @@
                     //大小控制器
                     var controller = $(settings.controller, this);
                     controller.unbind('mousedown').mousedown(function (e) {
+                        var clObj=$(this);
                       var itemW=item.width();
                         var itemH=item.height();
                         var posix = {
+                            'top':parseInt(item.css('top')),
+                            'left':parseInt(item.css('left')),
                             'ox':parseInt(item.css('left'))+offset.left+itemW/2,//元素中心坐标
                             'oy':parseInt(item.css('top'))+offset.top+itemH/2,
                             'w': itemW,
@@ -83,30 +87,84 @@
                             'x': e.pageX,//鼠标点击坐标
                             'y': e.pageY
                         };
-                        var distance_0=
+                        var direction;
                         posix['type']=0;//变化方向
-                        var cType=$(this).attr('data-type');
+                        var cType=clObj.attr('data-type');
                         switch (cType){
-                            case 2://宽度变化
-
+                            case '1'://宽度变化
+                                direction=e.pageY<posix.oy;
+                                clObj.css('cursor','s-resize');
+                                break;
+                            case '2'://宽度变化
+                                direction=e.pageX<posix.ox;
+                                clObj.css('cursor','w-resize');
+                                break;
+                            case '3'://整体变化
+                                if((e.pageY>posix.oy)&&(e.pageX>posix.ox)){
+                                    direction='rb';
+                                    clObj.css('cursor','se-resize');
+                                }//右下
+                                if((e.pageY<posix.oy)&&(e.pageX>posix.ox)){
+                                    direction='rt';
+                                    clObj.css('cursor','ne-resize');
+                                }//右上
+                                if((e.pageY>posix.oy)&&(e.pageX<posix.ox)){
+                                    direction='lb';
+                                    clObj.css('cursor','ne-resize');
+                                }//左下
+                                if((e.pageY<posix.oy)&&(e.pageX<posix.ox)){
+                                    direction='lt';
+                                    clObj.css('cursor','se-resize');
+                                }//左上
                                 break;
 
                         }
-
                         $.extend(moveObj, {
-                            'move': true, 'call_down': function (e) {
-                                var direction=getDirection(posix,e);//获取变化方向
+                            'move': true,'call_up':function(){clObj.css('cursor','crosshair');}, 'call_down': function (e) {
                                 var option={};
                                 var cX=e.pageX - posix.x;//x轴变化
-                                var cY=e.pageY - posix.y//y轴变化
-                                var distance=getDistance(cX,cY);
-                              //  if (cType==2) option['width']=distance+ posix.w;
-                                if (cType==2) option['width']=direction?distance+ posix.w:posix.w-distance;
+                                var cY=e.pageY - posix.y;//y轴变化
+                                if (cType==2){//宽度变化
+                                    option['width']=!direction?cX+posix.w:posix.w-cX;
+                                    if(direction){
+                                        option['left']=posix.left+cX;
+                                    }
+                                }
+                                if (cType==1){//高度变化
+                                    option['height']=!direction?cY+posix.h:posix.h-cY;
+                                    if(direction){
+                                        option['top']=posix.top+cY;
+                                    }
+                                }
+                                if (cType==3){//宽高变化
+                                    if(direction=='rb'){
+                                        option['height']=posix.h+cY;
+                                        option['width']=cX+posix.w;
+                                    }
+                                    if(direction=='rt'){
+                                        option['height']=posix.h-cY;
+                                        option['width']=cX+posix.w;
+                                        option['top']=posix.top+cY;
+                                    }
+                                    if(direction=='lt'){
+                                        option['height']=posix.h-cY;
+                                        option['width']=posix.w-cX;
+                                        option['top']=posix.top+cY;
+                                        option['left']=posix.left+cX;
+                                    }
+                                    if(direction=='lb'){
+                                        option['height']=posix.h+cY;
+                                        option['width']=posix.w-cX;
+                                        //option['top']=posix.top+cY;
+                                        option['left']=posix.left+cX;
+                                    }
+                                    //option['height']=!direction?cY+posix.h:posix.h-cY;
+                                    //option['width']=direction?cX+posix.w:posix.w-cX;
+                                    //if(direction){
+                                    //    option['top']=posix.top+cY;
+                                    //}
+                                }
                                 item.css(option);
-                                //item.css({
-                                //    'width': Math.max(30, e.pageX - posix.x + posix.w),
-                                //    'height': Math.max(30, e.pageY - posix.y + posix.h)
-                                //});
                             }
                         });
                         return false;
@@ -153,19 +211,7 @@
 
 
         });
-//返回变化方向 返回 false 接近 true远离
-function getDirection(posix,e){
-var oldDistance=getDistance(posix.x-posix.ox,posix.y-posix.oy);
-var newDistance=getDistance(e.pageX-posix.ox,e.pageY-posix.oy);
-    if(oldDistance>newDistance){
-        return false;
-    }else{
-        return true;
-    }
-}
-     function getDistance(cX,cY){//两点坐标差返回距离
-         return parseInt(Math.pow((cX * cX + cY * cY), 0.5));
-     }
+
 
     };
 })(jQuery);
