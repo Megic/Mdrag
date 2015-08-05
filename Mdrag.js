@@ -34,7 +34,8 @@
                         callback = moveObj.call_down || function () {
                                 $(moveObj.move_target).css({
                                     'top': e.pageY - posix.y,
-                                    'left': e.pageX - posix.x
+                                    'left': e.pageX - posix.x,
+                                    'opacity':0.7
                                 });
                             };
 
@@ -44,6 +45,9 @@
             }).mouseup(function (e) {
                 if (!!moveObj.move) {
                     var callback = moveObj.call_up || function () {
+                            $(moveObj.move_target).css({
+                                'opacity':1
+                            });
                         };
                     callback.call(this, e);
                     $.extend(moveObj, {
@@ -202,7 +206,7 @@
                     });
                 //旋转控制结束
                 }
-                return false;
+                event.stopPropagation();
             });
 
 
