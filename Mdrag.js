@@ -89,7 +89,7 @@
                         var direction;
                         var cType = clObj.attr('data-type');
                         switch (cType) {
-                            case '1'://宽度变化
+                            case '1'://高度变化
                                 direction = e.pageY < posix.oy;
                                 clObj.css('cursor', 's-resize');
                                 break;
