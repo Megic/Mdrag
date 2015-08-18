@@ -21,7 +21,7 @@
 
         return this.each(function () {
             var obj = $(this);//父元素，移动范围
-            var offset = obj.offset();//父元素边距
+
             //点击html隐藏控制器
             var curBox;
             $('html').mousedown(function () {
@@ -77,6 +77,7 @@
                     //大小控制器
                     var controller = $(settings.controller, this);
                     controller.unbind('mousedown').mousedown(function (e) {
+                        var offset = obj.offset();//父元素边距
                         var clObj = $(this);
                         var itemW = item.width();
                         var itemH = item.height();
@@ -175,6 +176,7 @@
                     var rotateCl = $(settings.rotate, item);
                     rotateCl.mousedown(function (e9) {
                         event.stopPropagation();
+                        var offset = obj.offset();//父元素边距
                         var x9 = e9.pageX;
                         var y9 = e9.pageY;
                         b_dw = item.width();
